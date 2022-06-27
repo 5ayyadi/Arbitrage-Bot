@@ -75,6 +75,17 @@ contract Ownable {
   }
 }
 
+interface IERC20 {
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
 interface IUniswapV2Factory {
   event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
@@ -172,7 +183,7 @@ contract ArbitrageBot is Ownable {
       return factories[_factory];
     }
 
-    function swapUsingStableCoin(address _stableCoin,uint _amountIn) external {
+    function swapUsingStableCoin(address _stableCoin,uint _amountIn) external payable{
       (address firstPair, uint middleAmount) = _bestPair(WETH, _stableCoin, _amountIn);
       (address secondPair, uint amountOut) = _bestPair(_stableCoin, WETH, middleAmount);
       require(amountOut > _amountIn, "Amount Out less than amount in");
@@ -184,7 +195,7 @@ contract ArbitrageBot is Ownable {
     }
 
     // gas must be passed in dollars.
-    function swapUsingEth(address _tokenIn, address _tokenOut, uint _amountIn, uint _gas) external {
+    function swapUsingEth(address _tokenIn, address _tokenOut, uint _amountIn, uint _gas) external payable{
         // find best pair between token0 and native token
         (address firstPair,uint middleAmount) = _bestPair(_tokenIn, WETH, _amountIn);
         (address secondPair,uint amountOut) = _bestPair(WETH, _tokenOut, middleAmount);
@@ -228,6 +239,13 @@ contract ArbitrageBot is Ownable {
     function _calculate_amount_out(uint _reserve0, uint _reserve1, uint _amountIn) internal pure returns(uint){
       uint K = _reserve0 * _reserve1;
       return _reserve1 - (K / (_reserve0 + _amountIn));
+    }
+
+    function Withdraw(address _token) public onlyOwner {
+        uint256 balance = IERC20(_token).balanceOf(address(this));
+        if (balance > 0) {
+            require(IERC20(_token).transfer(owner(), balance));
+        }
     }
 
 }
