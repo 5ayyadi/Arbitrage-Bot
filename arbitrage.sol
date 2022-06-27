@@ -172,6 +172,18 @@ contract ArbitrageBot is Ownable {
       return factories[_factory];
     }
 
+    function swapUsingStableCoin(address _stableCoin,uint _amountIn) external {
+      (address firstPair, uint middleAmount) = _bestPair(WETH, _stableCoin, _amountIn);
+      (address secondPair, uint amountOut) = _bestPair(_stableCoin, WETH, middleAmount);
+      require(amountOut > _amountIn, "Amount Out less than amount in");
+      uint difference = amountOut - _amountIn;
+      // spend 50% of difference as gas.
+      uint gas = gasPercent * difference / 1000;
+      require(gas >= tx.gas, "Gas is higher than difference, no benefits.");
+      emit Swap(WETH, _stableCoin, WETH, amountOut);
+    }
+
+    // gas must be passed in dollars.
     function swapUsingEth(address _tokenIn, address _tokenOut, uint _amountIn, uint _gas) external {
         // find best pair between token0 and native token
         (address firstPair,uint middleAmount) = _bestPair(_tokenIn, WETH, _amountIn);
@@ -179,12 +191,11 @@ contract ArbitrageBot is Ownable {
         require(amountOut > _amountIn, "Amount Out less than amount in");
         // calculate difference in native token.
         uint difference = amountOut - _amountIn;
-        uint ETH_difference = difference / ETH_price;
         // spend 50% of difference as gas.
-        uint gas = gasPercent * ETH_difference / 1000;
+        uint gas = gasPercent * difference / 1000;
         require(gas >= _gas, "Gas is higher than difference, no benefits.");
         // call _swap function
-        emit Swap(_tokenIn, _tokenOut, _amountIn, _amountOut);
+        emit Swap(_tokenIn, _tokenOut, _amountIn, amountOut);
     }
 
     function _bestPair(address _token0, address _token1, uint _amountIn) internal view returns(address, uint){
@@ -194,7 +205,7 @@ contract ArbitrageBot is Ownable {
         uint _reserve1;
         address pair;
         uint16 fee;
-        address bestPair;
+        uint _aOut;
         for (uint i = 0; i < factories.length; i++) {
             pair = IUniswapV2Factory(factories[i]).getPair(_token0, _token1);
             fee = getFee(factories[i]);
@@ -206,7 +217,7 @@ contract ArbitrageBot is Ownable {
             } else {
               _aOut = _calculate_amount_out(_reserve1, _reserve0, _aIn);
             }
-            if (_aout >= bestAmount){
+            if (_aOut >= bestAmount){
               bestAmount = _aOut;
               bestPair = pair;
             }
@@ -214,7 +225,7 @@ contract ArbitrageBot is Ownable {
         return (bestPair, bestAmount);
     }
 
-    function _calculate_amount_out(uint _reserve0, uint _reserve1, uint _amountIn) internal pure view returns(uint){
+    function _calculate_amount_out(uint _reserve0, uint _reserve1, uint _amountIn) internal pure returns(uint){
       uint K = _reserve0 * _reserve1;
       return _reserve1 - (K / (_reserve0 + _amountIn));
     }
