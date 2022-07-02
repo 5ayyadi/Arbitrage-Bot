@@ -1,2 +1,4 @@
 tt.*
 /samples
+artifacts/
+Pipfile.lock
