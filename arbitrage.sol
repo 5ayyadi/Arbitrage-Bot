@@ -155,7 +155,7 @@ contract ArbitrageBot is Ownable {
     uint16 public gasPercent;
     address[] public factories;
     mapping(address => uint16) lpFees;
-  
+    address WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
     event Swap(
         address indexed fromToken,
@@ -168,7 +168,7 @@ contract ArbitrageBot is Ownable {
       gasPercent = _percentage;
     }
 
-    function addFactories(address[] _factories, uint16[] _fees) public onlyOwner {
+    function addFactories(address[] memory _factories, uint16[] memory _fees) public onlyOwner {
         for (uint i = 0; i < _factories.length; i++) {
           factories.push(_factories[i]);
           lpFees[_factories[i]] = _fees[i];
