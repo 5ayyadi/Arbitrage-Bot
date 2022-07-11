@@ -4,9 +4,9 @@
   "description": "- Fantom   -",
   "main": "index.js",
   "dependencies": {
+    "chai": "^4.3.6",
     "hardhat": "^2.10.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "mocha"
   },
@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/5ayyadi/Arbitrage-Bot/issues"
   },
-  "homepage": "https://github.com/5ayyadi/Arbitrage-Bot#readme"
+  "homepage": "https://github.com/5ayyadi/Arbitrage-Bot#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.3"
+  }
 }

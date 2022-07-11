@@ -1,7 +1,5 @@
-pragma solidity ^0.8.0;
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.0 (token/ERC20/IERC20.sol)
-
 pragma solidity ^0.8.0;
 
 /**
@@ -51,7 +49,7 @@ interface IERC20 {
      * Emits an {Approval} event.
      */
     function approve(address spender, uint256 amount) external returns (bool);
-
+    function decimals() external view returns(uint8);
     /**
      * @dev Moves `amount` tokens from `sender` to `recipient` using the
      * allowance mechanism. `amount` is then deducted from the caller's
