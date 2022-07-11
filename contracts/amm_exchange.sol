@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 // import all dependencies and interfaces:
 // import "../interfaces/IUniswapV2Router.sol";
-import "./interfaces/IUniswapV2Pair.sol";
-import "./interfaces/IERC20.sol";
+import "../interfaces/IERC20.sol";
+import "../interfaces/IUniswapV2Pair.sol";
 
 // import "../libraries/safeTransfer.sol";
 
