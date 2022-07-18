@@ -50,6 +50,8 @@ contract ArbitrageBot is Ownable, UniswapAmm {
         return lpFees[_factory];
     }
         
+    /// @dev this function uses stable coin as middle token 
+    /// to increase WETH. (WETH -> Stable -> WETH)
     function swapUsingStableCoin(address _stableCoin, uint256 _amountIn, uint256 _gas)
         external
     {

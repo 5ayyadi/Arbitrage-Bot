@@ -6,9 +6,10 @@ const { ethers } = require("hardhat");
 
 describe("Price contract", function () {
   async function deployPriceFixture() {
+    const WETH = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
     const Price = await ethers.getContractFactory("Price");
     const [owner] = await ethers.getSigners();
-    const priceContract = await Price.deploy("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
+    const priceContract = await Price.deploy(WETH);
     await priceContract.deployed();
 
     return { Price, priceContract, owner };
