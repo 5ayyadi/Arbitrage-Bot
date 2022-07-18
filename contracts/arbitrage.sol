@@ -49,11 +49,10 @@ contract ArbitrageBot is Ownable, UniswapAmm {
     function getFee(address _factory) public view returns (uint16) {
         return lpFees[_factory];
     }
-
-    function swapUsingStableCoin(address _stableCoin, uint256 _amountIn)
+        
+    function swapUsingStableCoin(address _stableCoin, uint256 _amountIn, uint256 _gas)
         external
     {
-        uint256 init_gas = gasleft();
         (address firstPair, uint256 middleAmount, uint16 firstFee) = _bestPair(
             WETH,
             _stableCoin,
@@ -65,12 +64,13 @@ contract ArbitrageBot is Ownable, UniswapAmm {
             middleAmount
         );
         require(amountOut > _amountIn, "Amount Out less than amount in");
-        uint256 difference = amountOut - _amountIn;
+         uint256 difference = amountOut - _amountIn;
         // spend 50% of difference as gas.
         uint256 gas = (gasPercent * difference) / 1000;
-        // TODO Some thing is wrong in version 8.10
-        uint256 used_gas = init_gas - gasleft();
-        require(gas >= used_gas, "Gas is higher than difference, no benefits.");
+        require(gas >= _gas, "Gas is higher than difference, no benefits.");
+        // call _swap function
+        SwapTokensSupportingFee(firstFee, firstPair, WETH, _stableCoin, address(this));
+        SwapTokensSupportingFee(secondFee, secondPair, _stableCoin, WETH, address(this));
         emit Swap(WETH, _stableCoin, _amountIn, amountOut);
     }
 
