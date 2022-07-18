@@ -6,11 +6,13 @@ import "../interfaces/IUniswapV2Pair.sol";
 import "../interfaces/IUniswapV2Factory.sol";
 import "../interfaces/IWETH.sol";
 import "../libraries/Ownable.sol";
+import "hardhat/console.sol";
+
 
 import "./amm_exchange.sol";
 
 
-contract ArbitrageBot is Ownable, UniswapAmm {
+contract Arbitrage is Ownable, UniswapAmm {
     uint16 public gasPercent;
     address[] public factories;
     mapping(address => uint16) lpFees;
@@ -29,6 +31,7 @@ contract ArbitrageBot is Ownable, UniswapAmm {
     }
 
     function setGasPercent(uint16 _percentage) external onlyOwner {
+        require(_percentage < 1000 && _percentage >0, "Percentage must be between 0 and 1000");
         gasPercent = _percentage;
     }
 
@@ -77,6 +80,7 @@ contract ArbitrageBot is Ownable, UniswapAmm {
     }
 
     // gas must be passed in dollars.
+    // TODO: Fix don't use a pairs twice.
     function swapUsingEth(
         address _tokenIn,
         address _tokenOut,
@@ -125,6 +129,9 @@ contract ArbitrageBot is Ownable, UniswapAmm {
             pair = IUniswapV2Factory(factories[i]).getPair(_token0, _token1);
             // fee = getFee(factories[i]);
             uint256 _aIn = (_amountIn * getFee(factories[i])) / (10**4);
+            if (pair == address(0)){
+                continue;
+            }
             (_reserve0, _reserve1, ) = IUniswapV2Pair(pair).getReserves();
             if (_token0 == IUniswapV2Pair(pair).token0()) {
                 /// @dev should always pass starting token as first parameter
@@ -133,6 +140,7 @@ contract ArbitrageBot is Ownable, UniswapAmm {
                 _aOut = _calculate_amount_out(_reserve1, _reserve0, _aIn);
             }
             if (_aOut >= bestAmount) {
+                console.log(pair);
                 bestAmount = _aOut;
                 bestPair = pair;
                 bestFee = getFee(factories[i]);
