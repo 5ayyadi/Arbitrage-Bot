@@ -28,7 +28,7 @@ describe("Arbitrage contract", function () {
         expect(fees[i]).to.equal(await arbitrageContract.getFee(factories[i]));
       }
     });
-    it("swapUsingStableCoin should make profit", async function () {
+    it("swapOnWETH should make profit", async function () {
       const { arbitrageContract } = await loadFixture(deployArbitrage);
       const factories = [
         "0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac", // Sushiswap
@@ -52,7 +52,7 @@ describe("Arbitrage contract", function () {
       const result = await arbitrageContract.find_best_result(StableCoins,WETH,amountIn)
       console.log(result)
       // await arbitrageContract.setGasPercent(gasPercentage);
-      // await arbitrageContract.swapUsingStableCoin(USDT,amountIn,gas);
+      // await arbitrageContract.swapOnWETH(USDT,amountIn,gas);
 
     });
   });

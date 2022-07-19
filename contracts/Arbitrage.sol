@@ -60,7 +60,7 @@ contract Arbitrage is Ownable, UniswapAmm {
 
     /// @dev this function uses stable coin as middle token
     /// to increase WETH. (WETH -> Stable -> WETH)
-    function swapUsingStableCoin(
+    function swapOnWETH(
         address _stableCoin,
         uint256 _amountIn,
         uint256 _gas
@@ -104,17 +104,18 @@ contract Arbitrage is Ownable, UniswapAmm {
     }
 
     // gas must be passed in dollars.
-    // TODO: Fix don't use a pairs twice.
-    function swapUsingEth(
+    // TODO: Fix don't use a pair twice.
+    function swapOnStableCoin(
         address _tokenIn,
         address _tokenOut,
+        address _midToken,
         uint256 _amountIn,
         uint256 _gas
     ) external {
         // find best pair between token0 and native token
-        BestPair memory first_best_pair = _bestPair(_tokenIn, WETH, _amountIn);
+        BestPair memory first_best_pair = _bestPair(_tokenIn, _midToken, _amountIn);
         BestPair memory second_best_pair = _bestPair(
-            WETH,
+            _midToken,
             _tokenOut,
             first_best_pair.amount
         );
@@ -134,13 +135,13 @@ contract Arbitrage is Ownable, UniswapAmm {
             first_best_pair.fee,
             first_best_pair.pair,
             _tokenIn,
-            WETH,
+            _midToken,
             address(this)
         );
         SwapTokensSupportingFee(
             second_best_pair.fee,
             second_best_pair.pair,
-            WETH,
+            _midToken,
             _tokenOut,
             address(this)
         );
@@ -166,6 +167,7 @@ contract Arbitrage is Ownable, UniswapAmm {
             pair = IUniswapV2Factory(factories[i]).getPair(_token0, _token1);
             // fee = getFee(factories[i]);
             uint256 _aIn = (_amountIn * getFee(factories[i])) / (10**4);
+            console.log(pair);
             if (pair == address(0)) {
                 continue;
             }
@@ -184,7 +186,7 @@ contract Arbitrage is Ownable, UniswapAmm {
                 bestfactory = factories[i];
             }
         }
-        console.log(_token0, _token1, bestPair, bestAmount);
+        // console.log(_token0, _token1, bestPair, bestAmount);
         return BestPair(bestPair, bestAmount, bestFee);
     }
 
