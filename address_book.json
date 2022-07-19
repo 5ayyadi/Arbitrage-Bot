@@ -1,0 +1,31 @@
+{
+    "SushiSwap": {
+      "name": "SushiSwap",
+      "factory": "0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac",
+      "router": "0xeB5c2BB5E83B51d83F3534Ae21E84336B8B376ef",
+      "lp_fee": 9970,
+      "index": 0,
+      "type": 1
+    },
+    "SakeSwap":{
+      "factory":"0x75e48C954594d64ef9613AeEF97Ad85370F13807",
+      "router":"0x9C578b573EdE001b95d51a55A3FAfb45f5608b1f",
+      "lp_fee":9970
+    },
+    "UniswapV2":{
+      "factory":"0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+      "router":"0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+      "lp_fee": 9970
+    },
+    "ShibaSwap":{
+      "factory":"0x115934131916c8b277dd010ee02de363c09d037c",
+      "router":"0x03f7724180AA6b939894B5Ca4314783B0b36b329",
+      "lp_fee":9970
+    },
+    "Apeswap" : {
+        "facotry":"0xBAe5dc9B19004883d0377419FeF3c2C8832d7d7B",
+        "router" : "0x5f509a3C3F16dF2Fba7bF84dEE1eFbce6BB85587",
+        "lp_fee":9980
+
+    }
+  }
