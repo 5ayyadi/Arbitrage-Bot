@@ -23,7 +23,7 @@ async def swap_on_eth(tokens: list[str], amount_in: int, gas: int) -> list:
         try: 
             trx = arbitrage_contract.functions.swapOnWETH(token, amount_in, gas).buildTransaction()
             signed_trx = w3.eth.account.sign_transaction(trx, private_key)
-            gas_estimate = w3.eth.estimateGas(signed_trx)
+            gas_estimate = w3.eth.estimate_gas(signed_trx)
         except ContractLogicError:
             continue
         trx_hash = w3.eth.sendRawTransaction(signed_trx.rawTransaction)
@@ -39,7 +39,7 @@ async def swap_on_stable(tokens: list[str], stable_coins: list[str], amount_in: 
                 try: 
                     trx = arbitrage_contract.functions.swapOnStableCoin(coin0, coin1, token, amount_in, gas).buildTransaction()
                     signed_trx = w3.eth.account.sign_transaction(trx, private_key)
-                    gas_estimate = w3.eth.estimateGas(signed_trx)
+                    gas_estimate = w3.eth.estimate_gas(signed_trx)
                 except ContractLogicError:
                     continue
                 trx_hash = w3.eth.sendRawTransaction(signed_trx.rawTransaction)
